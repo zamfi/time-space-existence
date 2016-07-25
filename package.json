@@ -1,0 +1,17 @@
+{
+  "name": "venice-beinnale",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node testing.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-static": "^0.7.7",
+    "particle-api-js": "~5.2.6",
+    "ws": "^1.1.0"
+  }
+}

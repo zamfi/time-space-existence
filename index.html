@@ -1,0 +1,250 @@
+<html>
+<head>
+  <link rel="stylesheet" href="/assets/css/leaflet.css" />
+  <script src="/assets/js/leaflet.js"></script>
+  <script src="/assets/js/browser.min.js"></script>
+  <script src="/assets/js/fetch-polyfill.js"></script>
+  <script src="/assets/js/topojson.js"></script>
+  
+  <style>
+  #the-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+  }
+  
+  path.target {
+    stroke-opacity: 0;
+    fill-opacity: 0;
+    transform-origin: center center;
+  }
+  
+  @keyframes pulse {
+    0% {
+      stroke-width: 2;
+      stroke-opacity: 0.9;
+      transform: scale(1.0);
+    }
+    15% {
+      stroke-width: 4;
+      transform: scale(1.4);
+      stroke-opacity: 0.6;
+    }
+    60% {
+      stroke-width: 16;
+      transform: scale(2.7);
+      stroke-opacity: 0.0;
+    }
+    100% {
+      stroke-opacity: 0.0;
+    }
+  }
+  
+  @keyframes zeroin {
+    0% {
+      stroke-width: 1;
+      stroke-opacity: 0;
+      transform: scale(100);
+      fill-opacity: 0;
+    }
+    100% {
+      stroke-width: 2;
+      stroke-opacity: 0.8;
+      transform: scale(1.0);
+      fill-opacity: 0;
+    }
+  }
+  
+  path.target.active.one {
+    fill-opacity: 0.9;
+/*    animation: pulse 1s 0s ease-in infinite;*/
+  }
+  path.target.active.two {
+    animation: pulse 1000ms linear infinite;
+  }
+  path.target.active.three {
+    animation: pulse 1000ms linear infinite;
+    animation-delay: 250ms;
+  }
+
+  path.target.zeroin.active {
+    stroke-width: 2;
+    transform: scale(1.0);
+    fill-opacity: 0.9;
+    animation: zeroin 500ms linear
+  }
+  
+  path.traversal {
+    stroke-width: 0;
+  }
+  
+  @keyframes drawline {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  path.traversal.active {
+    stroke-width: 15;
+    animation: drawline 1s ease-in;
+  }
+  
+  .leaflet-zoom-anim .leaflet-zoom-animated {
+  	-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.25,1);
+  	   -moz-transition:    -moz-transform 1s cubic-bezier(0,0,0.25,1);
+  	     -o-transition:      -o-transform 1s cubic-bezier(0,0,0.25,1);
+  	        transition:         transform 1s cubic-bezier(0,0,0.25,1);
+  	}
+  </style>
+  
+  <title>Time Space Existence Map Test</title>
+  <script type="text/javascript">
+  function openSocket() {
+    "use strict";
+    var url = 'ws://'+window.location.hostname+(window.location.port ? ':'+window.location.port : '');
+    var socket = new WebSocket(url);
+    var frameId = 0;
+    socket.addEventListener('message', function(event) {
+      var frames = JSON.parse(event.data);
+      var table = document.getElementById('data-table');
+      frames.forEach(function(frame) {
+        // var tr = document.createElement('tr');
+        //
+        // var td = document.createElement('td');
+        // td.textcontent = String(frameId++);
+        // tr.appendChild(td);
+        //
+        // frame.forEach(function(data) {
+        //   var td = document.createElement('td');
+        //   td.textContent = String(data);
+        //   tr.appendChild(td);
+        // });
+        // table.insertBefore(tr, table.firstChild.nextSibling);
+      });
+    });
+    socket.addEventListener('close', function(event) {
+      openSocket();
+    });
+  }
+  openSocket();
+  </script>
+</head>
+<body>
+  <h3>Testing for WiFi...</h3>
+  <div id="the-map"></div>
+  <script type="text/babel">
+  
+  function getGeoIp() {
+    return new Promise((resolve, reject) => {
+      let key = "cb_"+"xxxxxxxxxxxxx".replace(/x/g, (c) => (Math.random()*16|0).toString(36));
+      window[key] = (data) => {
+        resolve(data);
+      }
+      setTimeout(() => {
+        reject("timeout");
+      }, 10*1000);
+      var script = document.createElement('script');
+      script.src = '//freegeoip.net/json/?callback='+key
+
+      document.getElementsByTagName('head')[0].appendChild(script);
+    });
+  }
+  
+  function addTarget(latlon, color, count, className) {
+    let options = (name) => { return {
+      className: "target "+className+" active "+name,
+      stroke: true,
+      color: color,
+      'stroke-width': undefined,
+      'stroke-opacity': undefined,
+      fill: name == "one",
+      radius: 4
+    }; };
+    return ["one", "two", "three"].slice(0, count).map((name) => 
+      L.circleMarker(latlon, options(name)).addTo(map)
+    );    
+  }
+  let destination = [45.4370, 12.3351];
+  let source = destination;
+  let openAnimationMarkers = [];
+  function findUser() {
+    getGeoIp().then(({latitude, longitude, ...others}) => {
+      source = [latitude, longitude];
+
+      // let's add this now, it has no weight, so it's under everything else.
+      openAnimationMarkers.push(L.polyline([source, destination], {
+        className: "traversal", 
+        color: "#4bffff", 
+        weight: 2
+      }).addTo(map));
+
+      // console.log(latitude, longitude, others);
+      openAnimationMarkers.push(...addTarget(source, "#3f3", 3, "source"));
+      return wait(1.5);
+    }).then(() => {
+      let zeroin = addTarget(destination, "#f33", 1, "zeroin")[0];
+      return wait(0.5).then(() => {
+        map.removeLayer(zeroin);
+        openAnimationMarkers.push(...addTarget(destination, "#f33", 3, "destination"));
+        return wait(2.0);
+      });
+    }).then(() => {
+      let traversalPath = document.getElementsByClassName("traversal")[0];
+      let len = traversalPath.getTotalLength();
+      traversalPath.setAttribute('stroke-dasharray', len);
+      traversalPath.setAttribute('stroke-dashoffset', len);
+      traversalPath.classList.add("active");
+
+      return wait(1.0).then(() => {
+        traversalPath.setAttribute('stroke-dasharray', "none");
+        traversalPath.setAttribute('stroke-dashoffset', "none");
+        map.setZoom(10);
+      });
+    });
+  }
+  
+  function wait(s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => resolve(), s*1000);
+    });
+  }
+  
+  
+  let map = L.map('the-map', {
+    // dragging: false,
+    // zoomControl: false,
+    touchZoom: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    markerZoomAnimation: false,
+    zoomAnimationThreshold: 10
+  }).setView(destination, 2);  
+
+  // L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+  //     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  //     maxZoom: 18,
+  //     id: 'zamfi.j7fanp6l',
+  //     accessToken: 'pk.eyJ1IjoiemFtZmkiLCJhIjoiY2lxZm9seHgyMDNuMWZvbmVvZ2U0MnlkcCJ9.VG44qACUQrTlaUfVK5cgdQ'
+  // }).addTo(map);
+  fetch('/assets/world_map.json').then((response) => {
+    if (response.status != 200) {
+      alert("Failed to load json!");
+      throw "Error: "+response.status;
+    }
+    return response.json();
+  }).then((geoJson) => {
+    L.geoJson(topojson.feature(geoJson, geoJson.objects.countries).features, {
+      style: {
+        fillColor: "#000",
+        weight: 1.5,
+        color: '#4bffff'
+      }
+    }).addTo(map);
+    findUser();
+  });
+  </script>
+</body>
+</html>
