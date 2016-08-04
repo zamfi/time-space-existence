@@ -1,0 +1,148 @@
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      	<path fill="#00548E" d="M-21.8-20.1H1052v1069.6H-21.8z"/>
+      	<g fill="none" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10">
+      		<path d="M474.2 638.7v-38.1M525 423v177.6M474.2 524.5V384.9M575.7 638.7v-38.1M525 423v177.6M575.7 524.5V384.9M402.1 600.6h-12.7v-38h135.5l-38.1 38h-46.7M402.1 524.5h-12.7v38.1h135.5l-38.1-38.1h-46.7"/>
+      		<path d="M622.3 600.6H635v-38H524.9l38 38h21.3M622.3 524.5H635v38.1H524.9l38-38.1h21.3M474.2 638.7h101.5L525 600.6zM474.2 384.9h101.5L525 423z"/>
+      		<g>
+      			<path d="M480.5 512.8v-19.1h38l-19 19.1z"/>
+      			<path d="M480.5 474.7v19h38l-19-19z"/>
+      		</g>
+      		<g>
+      			<path d="M569.3 512.8v-19.1h-38.1l19 19.1z"/>
+      			<path d="M569.3 474.7v19h-38.1l19-19z"/>
+      		</g>
+      		<g>
+      			<path d="M402.1 518.2h19v38l-19-19zM440.1 518.2h-19v38l19-19z"/>
+      		</g>
+      		<g>
+      			<path d="M402.1 607h19v-38.1l-19 19zM440.1 607h-19v-38.1l19 19z"/>
+      		</g>
+      		<g>
+      			<path d="M584.2 518.2h19v38l-19-19z"/>
+      			<path d="M622.3 518.2h-19.1v38l19.1-19z"/>
+      		</g>
+      		<g>
+      			<path d="M584.2 607h19v-38.1l-19 19z"/>
+      			<path d="M622.3 607h-19.1v-38.1l19.1 19z"/>
+      		</g>
+      		<g>
+      			<path d="M480.5 461.1V442h38l-19 19.1zM480.5 423v19h38l-19-19z"/>
+      		</g>
+      		<g>
+      			<path d="M569.3 461.1V442h-38.1l19 19.1zM569.3 423v19h-38.1l19-19z"/>
+      		</g>
+      	</g>
+      	<g class="markers" fill="#75C043">
+          <circle class="c1" cx="524.9" cy="353" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+
+      		<circle class="c2" cx="612.7" cy="412" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+          <circle class="c3" cx="612.7" cy="483.7" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      		<circle class="c4" cx="667.2" cy="562.6" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      		<circle class="c10" cx="430.6" cy="412" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      		<circle class="c9" cx="430.6" cy="483.7" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      		<circle class="c8" cx="357.1" cy="562.6" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      		<circle class="c7" cx="435.2" cy="638.7" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      		<circle class="c5" cx="612.7" cy="638.7" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      		<circle class="c6" cx="524.9" cy="667.3" r="5">
+            <animate id="radius"
+              attributeName="r"
+              begin="0s" dur="1.8s"
+              repeatCount="indefinite"
+              from="0.5%" to="2%"/>
+            <animate id="opacity"
+              attributeName="opacity"
+              repeatCount="indefinite"
+              from="1" to="0" dur="1.8s" begin="0s" />
+          </circle>
+      	</g>
+      </svg>

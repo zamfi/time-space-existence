@@ -1,0 +1,21 @@
+body {
+  background-color: #00548E;
+}
+
+svg {
+  width: 80vw;
+  animation: rotation 360s linear infinite;
+}
+
+@keyframes rotation {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+circle {
+    -webkit-transition: transform 0.7s ease-in-out;
+    -moz-transition: transform 0.7s ease-in-out;
+    transition: transform 0.7s ease-in-out;
+}

@@ -1,11 +1,15 @@
 <html>
 <head>
   <link rel="stylesheet" href="/assets/css/leaflet.css" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+
   <script src="/assets/js/leaflet.js"></script>
   <script src="/assets/js/browser.min.js"></script>
   <script src="/assets/js/fetch-polyfill.js"></script>
   <script src="/assets/js/topojson.js"></script>
-  
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
   <style>
   #the-map {
     position: absolute;
@@ -14,14 +18,45 @@
     width: 100vw;
     height: 100vh;
     background: #000;
+    /*opacity: 1.0;*/
+
+    -webkit-transition: opacity 3s ease-in-out;
+    -moz-transition: opacity 3s ease-in-out;
+    -ms-transition: opacity 3s ease-in-out;
+    -o-transition: opacity 3s ease-in-out;
   }
-  
+
+  .animation-complete {
+    opacity: 0;
+  }
+
+  #house-model {
+    position: absolute;
+    top: -200;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    -webkit-transition: opacity 3s ease-in-out;
+    -moz-transition: opacity 3s ease-in-out;
+    -ms-transition: opacity 3s ease-in-out;
+    -o-transition: opacity 3s ease-in-out;
+  }
+
+  .model-out {
+    opacity: 0.0;
+  }
+
+  .model-in {
+    opacity: 1.0;
+  }
+
   path.target {
     stroke-opacity: 0;
     fill-opacity: 0;
     transform-origin: center center;
   }
-  
+
   @keyframes pulse {
     0% {
       stroke-width: 2;
@@ -42,7 +77,7 @@
       stroke-opacity: 0.0;
     }
   }
-  
+
   @keyframes zeroin {
     0% {
       stroke-width: 1;
@@ -57,7 +92,7 @@
       fill-opacity: 0;
     }
   }
-  
+
   path.target.active.one {
     fill-opacity: 0.9;
 /*    animation: pulse 1s 0s ease-in infinite;*/
@@ -76,11 +111,11 @@
     fill-opacity: 0.9;
     animation: zeroin 500ms linear
   }
-  
+
   path.traversal {
     stroke-width: 0;
   }
-  
+
   @keyframes drawline {
     to {
       stroke-dashoffset: 0;
@@ -90,7 +125,7 @@
     stroke-width: 15;
     animation: drawline 1s ease-in;
   }
-  
+
   .leaflet-zoom-anim .leaflet-zoom-animated {
   	-webkit-transition: -webkit-transform 1s cubic-bezier(0,0,0.25,1);
   	   -moz-transition:    -moz-transform 1s cubic-bezier(0,0,0.25,1);
@@ -98,9 +133,42 @@
   	        transition:         transform 1s cubic-bezier(0,0,0.25,1);
   	}
   </style>
-  
+
   <title>Time Space Existence Map Test</title>
+
   <script type="text/javascript">
+    // 'c1' beginning from top, going clockwise
+    var translations = {'c1':'Up', 'c2': 'Right', 'c3': 'Right', 'c4': 'Right', 'c5': 'Down', 'c6': 'Down', 'c7': 'Down', 'c8': 'Left', 'c9': 'Left', 'c10': 'Left'};
+    var translationMax = 100;
+
+    function translateMarker(id, percentage) {
+
+      var xTrans = 0; var yTrans = 0;
+
+      if (translations[id] == "Right" || translations[id] == "Left") {
+        xTrans = (translations[id] == "Right") ? percentage : -1 * percentage;
+        xTrans = xTrans * translationMax;
+      }
+
+      if (translations[id] == "Up" || translations[id] == "Down") {
+        yTrans = (translations[id] == "Up") ? -1 * percentage : percentage;
+        yTrans = yTrans * translationMax;
+      }
+      var circle = document.getElementsByClassName(id);
+      [0, 1].map(function(element) {
+        circle[element].style.transform = "translate(" + xTrans + "px," + yTrans + "px)";
+      });
+    }
+
+    function getPercentageFromDistance(distance) {
+      let assumedMax = 10;
+      return distance % assumedMax / assumedMax;
+    }
+
+  </script>
+
+  <script type="text/javascript">
+
   function openSocket() {
     "use strict";
     var url = 'ws://'+window.location.hostname+(window.location.port ? ':'+window.location.port : '');
@@ -109,7 +177,13 @@
     socket.addEventListener('message', function(event) {
       var frames = JSON.parse(event.data);
       var table = document.getElementById('data-table');
+      var sensorID = 1;
       frames.forEach(function(frame) {
+        // console.log(frame);
+        frame.forEach(function(distance) {
+          console.log(distance);
+          translateMarker('c' + sensorID++, getPercentageFromDistance(distance));
+        });
         // var tr = document.createElement('tr');
         //
         // var td = document.createElement('td');
@@ -132,10 +206,12 @@
   </script>
 </head>
 <body>
-  <h3>Testing for WiFi...</h3>
+  <!-- <h3>Testing for WiFi...</h3> -->
   <div id="the-map"></div>
+  <div id="house-model" class="model-out"></div>
+
   <script type="text/babel">
-  
+
   function getGeoIp() {
     return new Promise((resolve, reject) => {
       let key = "cb_"+"xxxxxxxxxxxxx".replace(/x/g, (c) => (Math.random()*16|0).toString(36));
@@ -151,7 +227,7 @@
       document.getElementsByTagName('head')[0].appendChild(script);
     });
   }
-  
+
   function addTarget(latlon, color, count, className) {
     let options = (name) => { return {
       className: "target "+className+" active "+name,
@@ -162,9 +238,9 @@
       fill: name == "one",
       radius: 4
     }; };
-    return ["one", "two", "three"].slice(0, count).map((name) => 
+    return ["one", "two", "three"].slice(0, count).map((name) =>
       L.circleMarker(latlon, options(name)).addTo(map)
-    );    
+    );
   }
   let destination = [45.4370, 12.3351];
   let source = destination;
@@ -175,8 +251,8 @@
 
       // let's add this now, it has no weight, so it's under everything else.
       openAnimationMarkers.push(L.polyline([source, destination], {
-        className: "traversal", 
-        color: "#4bffff", 
+        className: "traversal",
+        color: "#4bffff",
         weight: 2
       }).addTo(map));
 
@@ -202,16 +278,22 @@
         traversalPath.setAttribute('stroke-dashoffset', "none");
         map.setZoom(10);
       });
+    }).then(() => {
+
+      return wait(3.0).then(() => {
+        $('#the-map').addClass('animation-complete');
+        $('#house-model').removeClass('model-out').addClass('model-in');
+      });
     });
   }
-  
+
   function wait(s) {
     return new Promise((resolve, reject) => {
       setTimeout(() => resolve(), s*1000);
     });
   }
-  
-  
+
+
   let map = L.map('the-map', {
     // dragging: false,
     // zoomControl: false,
@@ -221,7 +303,25 @@
     boxZoom: false,
     markerZoomAnimation: false,
     zoomAnimationThreshold: 10
-  }).setView(destination, 2);  
+  }).setView(destination, 2);
+
+
+  fetch('/assets/model.svg').then((response) => {
+    if (response.status != 200) {
+      alert("Failed to load SVG!");
+      throw "Error: "+response.status;
+    }
+    return response.blob();
+  }).then((model) => {
+    var reader = new FileReader();
+    reader.addEventListener('loadend', function() {
+      $('#house-model').append(reader.result);
+      // processing script apparently needs to be appended after the SVG is loaded in
+      // below doesn't seem to work without concatenation of the two strings using '+'
+      $('<script src="/assets/js/model.js"></scr' + 'ipt>').appendTo('head');
+    });
+    reader.readAsBinaryString(model);
+  });
 
   // L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
   //     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
